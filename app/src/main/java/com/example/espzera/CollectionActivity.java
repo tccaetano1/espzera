@@ -2,7 +2,6 @@ package com.example.espzera;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.net.Uri;
@@ -263,23 +262,35 @@ public class CollectionActivity extends AppCompatActivity {
             if(tempDbFile.exists()) tempDbFile.delete();
 
             long successCount = 0;
-            try (SQLiteDatabase tempDb = SQLiteDatabase.openOrCreateDatabase(tempDbFile, null)) {
+            try (android.database.sqlite.SQLiteDatabase tempDb = android.database.sqlite.SQLiteDatabase.openOrCreateDatabase(tempDbFile, null)) {
                 DatabaseHelper.createCsiDataTable(tempDb);
                 tempDb.beginTransaction();
                 try {
                     String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
                     String cenario = cenarioInput.getText().toString();
-                    for (String line : dataToSave) {
-                        String sanitizedData = line.replaceAll("[\\[\\]]", "").trim();
-                        String[] parts = sanitizedData.split(",", 0); // Pega todas as partes
 
-                        if (parts.length > 1) {
+                    // --- INÍCIO DA CORREÇÃO ---
+                    for (String line : dataToSave) {
+                        // Não removemos mais os colchetes aqui, para que o split funcione corretamente
+                        String sanitizedData = line.trim();
+
+                        // O limite 25 garante que os 24 primeiros campos sejam separados
+                        // e o 25º campo (o array de dados) permaneça inteiro.
+                        String[] parts = sanitizedData.split(",", 25);
+
+                        // O array parts terá 25 elementos: CSI_DATA, seq, mac, ..., data
+                        if (parts.length == 25) {
+                            // Remove o "CSI_DATA" e passa o resto para o Helper
                             String[] csiPayload = Arrays.copyOfRange(parts, 1, parts.length);
                             if (DatabaseHelper.addCsiData(tempDb, timestamp, cenario, csiPayload) != -1) {
                                 successCount++;
                             }
+                        } else {
+                            logToConsole("Pacote descartado, formato inesperado. Partes: " + parts.length);
                         }
                     }
+                    // --- FIM DA CORREÇÃO ---
+
                     tempDb.setTransactionSuccessful();
                 } finally {
                     tempDb.endTransaction();
