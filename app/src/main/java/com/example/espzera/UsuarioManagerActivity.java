@@ -9,7 +9,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +25,9 @@ public class UsuarioManagerActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usuario_manager);
 
-        // Configura a barra de ação (opcional, para exibir o botão Voltar)
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(R.string.usuario_manager_title);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Habilita o botão Voltar
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         dbHelper = new DatabaseHelper(this);
@@ -41,33 +39,25 @@ public class UsuarioManagerActivity extends AppCompatActivity
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        // Carrega os usuários na inicialização
         loadUsers();
 
         buttonNewUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showAddEditUserDialog(null); // Passa null para indicar novo usuário
+                showAddEditUserDialog(null);
             }
         });
     }
 
-    /**
-     * Carrega todos os usuários do banco de dados e atualiza o RecyclerView.
-     */
     private void loadUsers() {
-        userList = dbHelper.getAllUsuarios(); // Obtém a lista atualizada de usuários
-        adapter.updateUsers(userList); // Notifica o adaptador para atualizar a UI
-        Log.d("UsuarioManagerActivity", "Usuários carregados: " + userList.size()); // Log para depuração
+        userList = dbHelper.getAllUsuarios();
+        adapter.updateUsers(userList);
+        Log.d("UsuarioManagerActivity", "Usuários carregados: " + userList.size());
         if (userList.isEmpty()) {
             Toast.makeText(this, "Nenhum usuário cadastrado.", Toast.LENGTH_SHORT).show();
         }
     }
 
-    /**
-     * Exibe o diálogo para adicionar ou editar um usuário.
-     * @param usuario O usuário a ser editado, ou null para adicionar um novo.
-     */
     private void showAddEditUserDialog(Usuario usuario) {
         AddEditUserDialogFragment dialogFragment;
         if (usuario == null) {
@@ -78,17 +68,13 @@ public class UsuarioManagerActivity extends AppCompatActivity
         dialogFragment.show(getSupportFragmentManager(), AddEditUserDialogFragment.TAG);
     }
 
-    // --- Implementação da interface OnUserActionListener (para botões Alterar/Excluir) ---
-
     @Override
     public void onEditClick(Usuario usuario) {
-        // Quando o botão "Alterar" é clicado, abre o modal pré-preenchido
         showAddEditUserDialog(usuario);
     }
 
     @Override
     public void onDeleteClick(Usuario usuario) {
-        // Confirmação antes de excluir
         new AlertDialog.Builder(this)
                 .setTitle(R.string.confirm_delete_title)
                 .setMessage(getString(R.string.confirm_delete_message, usuario.getNome()))
@@ -96,7 +82,7 @@ public class UsuarioManagerActivity extends AppCompatActivity
                     int rowsAffected = dbHelper.deleteUsuario(usuario.getId());
                     if (rowsAffected > 0) {
                         Toast.makeText(UsuarioManagerActivity.this, "Usuário excluído: " + usuario.getNome(), Toast.LENGTH_SHORT).show();
-                        loadUsers(); // Recarrega a lista após a exclusão
+                        loadUsers();
                     } else {
                         Toast.makeText(UsuarioManagerActivity.this, "Erro ao excluir usuário.", Toast.LENGTH_SHORT).show();
                     }
@@ -105,11 +91,8 @@ public class UsuarioManagerActivity extends AppCompatActivity
                 .show();
     }
 
-    // --- Implementação da interface OnUserSavedListener (para o diálogo) ---
-
     @Override
     public void onUserSaved() {
-        // Este método é chamado pelo diálogo quando um usuário é adicionado ou atualizado
-        loadUsers(); // Recarrega a lista de usuários para mostrar as alterações
+        loadUsers();
     }
 }

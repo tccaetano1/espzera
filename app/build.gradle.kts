@@ -33,11 +33,25 @@ android {
 
 dependencies {
 
+    // Dependências do catálogo de versões (libs)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+
+    // Dependência direta para a biblioteca de exportação CSV
+    implementation("com.opencsv:opencsv:5.9")
+
+    // Dependências de Teste
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
+    // A linha abaixo foi corrigida (o ponto final no fim foi removido)
     androidTestImplementation(libs.espresso.core)
+
+    /*
+     As linhas abaixo foram removidas pois eram duplicatas das dependências
+     que já estavam sendo chamadas pelo catálogo 'libs' no topo.
+     implementation (androidx.appcompat:appcompat:1.6.1)
+     implementation (com.google.android.material:material:1.11.0)
+    */
 }

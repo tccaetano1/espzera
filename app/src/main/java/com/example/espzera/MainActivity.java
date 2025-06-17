@@ -16,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
         Button buttonCollect = findViewById(R.id.button_collect_data);
         Button buttonProvision = findViewById(R.id.button_provision);
         Button buttonCadastros = findViewById(R.id.button_cadastros);
+        // BOTÃO ADICIONADO
+        Button buttonViewData = findViewById(R.id.button_view_data);
 
         buttonCollect.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,6 +39,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CadastrosActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        // AÇÃO DO BOTÃO ADICIONADO
+        buttonViewData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ViewDataActivity.class);
                 startActivity(intent);
             }
         });

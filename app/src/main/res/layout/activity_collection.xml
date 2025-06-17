@@ -1,118 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="0dp"
-            android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView style="@style/TextAppearance.Material3.TitleMedium" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1. Encontrar Dispositivo"/>
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="IP do Receptor ESP32">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/esp_ip_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <com.google.android.material.textfield.TextInputLayout style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="IP do Receptor ESP32">
+                <com.google.android.material.textfield.TextInputEditText android:id="@+id/esp_ip_input" android:layout_width="match_parent" android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <ProgressBar android:id="@+id/discovery_progress" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:visibility="gone" />
+            <Button android:id="@+id/discover_button" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="Procurar" />
+        </LinearLayout>
+
+        <TextView style="@style/TextAppearance.Material3.TitleMedium" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="2. Configurar Coleta"/>
+        <com.google.android.material.textfield.TextInputLayout style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:hint="Tempo de Leitura (segundos)">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/collection_time_input" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" android:text="30" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:hint="Cenário (Ex: Andando, Parado)">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/cenario_input" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="text" android:text="Teste"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <ProgressBar
-            android:id="@+id/discovery_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_marginStart="8dp"/>
-
+        <TextView style="@style/TextAppearance.Material3.TitleMedium" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="3. Arquivo de Saída"/>
         <Button
-            android:id="@+id/discover_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Procurar"/>
-    </LinearLayout>
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Tempo de Leitura (segundos)"
-        android:layout_marginTop="16dp">
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/collection_time_input"
+            android:id="@+id/select_db_button"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
-            android:text="60"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Porta de Escuta (neste celular)"
-        android:layout_marginTop="8dp">
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/listen_port_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:text="50001"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Cenário (Ex: Andando, Parado)"
-        android:layout_marginTop="8dp">
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/cenario_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp">
-        <Button
-            android:id="@+id/start_button"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Iniciar Coleta"/>
-        <Button
-            android:id="@+id/stop_button"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Parar Coleta"
-            android:enabled="false"
-            android:layout_marginStart="8dp"/>
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Console:"
-        android:layout_marginTop="16dp"/>
-    <ScrollView
-        android:id="@+id/console_scroll"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#333333"
-        android:padding="8dp">
+            android:text="Selecionar/Criar Arquivo .db" />
         <TextView
-            android:id="@+id/console_output"
+            android:id="@+id/selected_db_path"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:fontFamily="monospace"
-            android:textSize="12sp"/>
-    </ScrollView>
-</LinearLayout>
+            android:layout_marginTop="4dp"
+            android:text="Nenhum arquivo selecionado"
+            android:textColor="?android:attr/textColorSecondary"/>
+
+        <com.google.android.material.divider.MaterialDivider android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginVertical="24dp"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <Button android:id="@+id/start_button" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Iniciar Coleta" android:enabled="false"/>
+            <Button android:id="@+id/stop_button" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Parar Coleta" android:enabled="false" android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Console:" android:textAppearance="?attr/textAppearanceTitleMedium" />
+        <ScrollView android:id="@+id/console_scroll" android:layout_width="match_parent" android:layout_height="200dp" android:layout_marginTop="8dp" android:background="#333333" android:padding="8dp">
+            <TextView android:id="@+id/console_output" android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="monospace" android:textColor="#FFFFFF" android:textSize="12sp" />
+        </ScrollView>
+    </LinearLayout>
+</ScrollView>

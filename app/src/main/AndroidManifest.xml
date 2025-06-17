@@ -4,7 +4,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
 
     <application
         android:allowBackup="true"
@@ -14,7 +16,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.EspZera"
+        android:theme="@style/Theme.Espzera"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
         <activity
@@ -26,20 +29,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity" />
-        <activity android:name=".CadastrosActivity" />
-        <activity android:name=".UsuarioManagerActivity" />
+        <activity android:name=".MainActivity" android:exported="false" />
+        <activity android:name=".CollectionActivity" android:exported="false" android:label="Coleta de Dados" />
+        <activity android:name=".ViewDataActivity" android:exported="false" android:label="Visualizar Dados" />
 
-        <activity
-            android:name=".ProvisioningActivity"
-            android:label="Provisionar ESP32"
-            android:parentActivityName=".MainActivity"/>
-
-        <activity
-            android:name=".CollectionActivity"
-            android:label="Coletar Dados CSI"
-            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".ProvisioningActivity" android:exported="false" android:label="Provisionar ESP32" />
+        <activity android:name=".CadastrosActivity" android:exported="false" android:label="Cadastros" />
+        <activity android:name=".UsuarioManagerActivity" android:parentActivityName=".CadastrosActivity" android:exported="false" />
 
     </application>
-
 </manifest>
