@@ -105,12 +105,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_CSI_DATA_SQL);
     }
 
+    /**
+     * Adiciona uma nova linha de dados CSI a um banco de dados fornecido.
+     * Este método é estático para ser usado com instâncias de banco de dados externos/temporários.
+     *
+     * @param db O banco de dados SQLite onde os dados serão inseridos.
+     * @param dataHora O timestamp da coleta.
+     * @param cenario A descrição do cenário da coleta.
+     * @param csiParts Um array de Strings contendo os dados CSI, começando por 'seq'.
+     * @return O ID da linha inserida, ou -1 em caso de erro.
+     */
     public static long addCsiData(SQLiteDatabase db, String dataHora, String cenario, String[] csiParts) {
-        if (csiParts == null || csiParts.length < 25) {
-            Log.e(TAG, "Pacote CSI inválido descartado. Esperava >= 25 campos, mas recebeu " + (csiParts != null ? csiParts.length : 0));
+        // O payload que chega aqui (csiParts) deve ter 24 campos (de seq até data).
+        // Ajustamos a validação para o número correto de campos no payload.
+        if (csiParts == null || csiParts.length < 24) {
+            Log.e(TAG, "Pacote CSI inválido descartado. Esperava >= 24 campos de payload, mas recebeu " + (csiParts != null ? csiParts.length : 0));
             return -1;
         }
 
+        // Limpa as aspas, se houver, de cada parte dos dados.
         for (int i = 0; i < csiParts.length; i++) {
             if (csiParts[i] != null) {
                 csiParts[i] = csiParts[i].trim().replace("\"", "");
@@ -119,37 +132,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         try {
+            // --- CÓDIGO CORRIGIDO ---
+            // A ordem de inserção agora corresponde à ordem do payload recebido (csiParts),
+            // onde csiParts[0] = seq, csiParts[1] = mac, e assim por diante.
+
             values.put("data_hora", dataHora);
             values.put("cenario", cenario);
-            values.put("type", csiParts[0]);
+            values.put("type", "CSI_DATA"); // Adiciona o tipo de volta, que foi removido na Activity
+            values.put("seq", Integer.parseInt(csiParts[0]));
             values.put("mac", csiParts[1]);
-            values.put("seq", Integer.parseInt(csiParts[2]));
-            values.put("rssi", Integer.parseInt(csiParts[3]));
-            values.put("rate", Float.parseFloat(csiParts[4]));
-            values.put("sig_mode", Integer.parseInt(csiParts[5]));
-            values.put("mcs", Integer.parseInt(csiParts[6]));
-            values.put("bandwidth", Integer.parseInt(csiParts[7]));
-            values.put("smoothing", Integer.parseInt(csiParts[8]));
-            values.put("not_sounding", Integer.parseInt(csiParts[9]));
-            values.put("aggregation", Integer.parseInt(csiParts[10]));
-            values.put("stbc", Integer.parseInt(csiParts[11]));
-            values.put("fec_coding", Integer.parseInt(csiParts[12]));
-            values.put("sgi", Integer.parseInt(csiParts[13]));
-            values.put("noise_floor", Integer.parseInt(csiParts[14]));
-            values.put("ampdu_cnt", Integer.parseInt(csiParts[15]));
-            values.put("channel", Integer.parseInt(csiParts[16]));
-            values.put("secondary_channel", Integer.parseInt(csiParts[17]));
-            values.put("local_timestamp", Long.parseLong(csiParts[18]));
-            values.put("ant", Integer.parseInt(csiParts[19]));
-            values.put("sig_len", Integer.parseInt(csiParts[20]));
-            values.put("rx_state", Integer.parseInt(csiParts[21]));
-            values.put("len", Integer.parseInt(csiParts[22]));
-            values.put("first_word", Integer.parseInt(csiParts[23]));
-            values.put("data", csiParts[24]);
+            values.put("rssi", Integer.parseInt(csiParts[2]));
+            values.put("rate", Float.parseFloat(csiParts[3]));
+            values.put("sig_mode", Integer.parseInt(csiParts[4]));
+            values.put("mcs", Integer.parseInt(csiParts[5]));
+            values.put("bandwidth", Integer.parseInt(csiParts[6]));
+            values.put("smoothing", Integer.parseInt(csiParts[7]));
+            values.put("not_sounding", Integer.parseInt(csiParts[8]));
+            values.put("aggregation", Integer.parseInt(csiParts[9]));
+            values.put("stbc", Integer.parseInt(csiParts[10]));
+            values.put("fec_coding", Integer.parseInt(csiParts[11]));
+            values.put("sgi", Integer.parseInt(csiParts[12]));
+            values.put("noise_floor", Integer.parseInt(csiParts[13]));
+            values.put("ampdu_cnt", Integer.parseInt(csiParts[14]));
+            values.put("channel", Integer.parseInt(csiParts[15]));
+            values.put("secondary_channel", Integer.parseInt(csiParts[16]));
+            values.put("local_timestamp", Long.parseLong(csiParts[17]));
+            values.put("ant", Integer.parseInt(csiParts[18]));
+            values.put("sig_len", Integer.parseInt(csiParts[19]));
+            values.put("rx_state", Integer.parseInt(csiParts[20]));
+            values.put("len", Integer.parseInt(csiParts[21]));
+            values.put("first_word", Integer.parseInt(csiParts[22]));
+            
+            // Verifica se o campo 'data' existe antes de tentar acessá-lo.
+            if (csiParts.length > 23) {
+                values.put("data", csiParts[23]); 
+            } else {
+                values.put("data", ""); // Insere um valor vazio se o campo não existir
+            }
+            
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Erro de formatação de número ao parsear dados CSI: " + e.getMessage() + " | Dados: " + String.join(",", csiParts));
+            return -1;
         } catch (Exception e) {
-            Log.e(TAG, "Erro ao parsear dados CSI para inserção: " + e.getMessage());
+            Log.e(TAG, "Erro genérico ao preparar dados CSI para inserção: " + e.getMessage());
             return -1;
         }
+        
         return db.insert(TABLE_CSI_DATA, null, values);
     }
 }
