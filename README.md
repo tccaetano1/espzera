@@ -1,4 +1,4 @@
-# ESPZera Android Application
+# CSI Control Android Application
 
 This Android application is designed to facilitate the collection and visualization of Channel State Information (CSI) data from an ESP32 device. It provides an interactive grid interface to define measurement areas, initiate data collection via UDP broadcast, receive CSI data, and store it locally in an SQLite database. It also includes a feature to view the collected CSI data from a `.db` file.
 
